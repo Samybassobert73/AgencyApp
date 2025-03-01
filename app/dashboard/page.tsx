@@ -111,20 +111,20 @@ export default function Dashboard() {
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
-              Dashboard
+              Tableau de Bord
             </h1>
             <p className="mt-2 text-sm text-gray-500">
               {user.role === "agency" ? (
-                <>Welcome, {(userProfile as Agency).name}</>
+                <>Bienvenue, {(userProfile as Agency).name}</>
               ) : (
-                <>Welcome, {(userProfile as Contractor).companyName}</>
+                <>Bienvenue, {(userProfile as Contractor).companyName}</>
               )}
             </p>
           </div>
           <div className="mt-4 sm:mt-0">
             {user.role === "agency" && (
               <Link href="/request-intervention">
-                <Button>Request New Intervention</Button>
+                <Button>Nouvelle demande d&apos;intervention</Button>
               </Link>
             )}
           </div>
