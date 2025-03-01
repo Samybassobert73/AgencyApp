@@ -1,118 +1,131 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../context/AuthContext';
-import * as localStorageService from '../utils/localStorage';
-import Card from '../components/Card';
-import Input from '../components/Input';
-import Button from '../components/Button';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
+import * as localStorageService from "../utils/localStorage";
+import Card from "../components/Card";
+import Input from "../components/Input";
+import Button from "../components/Button";
+// import { types } from "util";
 
 export default function RequestIntervention() {
   const router = useRouter();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [contractors, setContractors] = useState(localStorageService.getContractors());
-  
+  const [error, setError] = useState("");
+
+  const [contractors] = useState(localStorageService.getContractors());
+
   // Form fields
-  const [description, setDescription] = useState('');
-  const [requestedDate, setRequestedDate] = useState('');
-  const [location, setLocation] = useState('');
+  const [description, setDescription] = useState("");
+  const [requestedDate, setRequestedDate] = useState("");
+  const [location, setLocation] = useState("");
   const [documents, setDocuments] = useState<string[]>([]);
-  const [contractorId, setContractorId] = useState('');
-  
+  const [contractorId, setContractorId] = useState("");
+
   useEffect(() => {
     // If user is not logged in, redirect to login page
     if (!user) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
-    
+
     // If user is not an agency, redirect to dashboard
-    if (user.role !== 'agency') {
-      router.push('/dashboard');
+    if (user.role !== "agency") {
+      router.push("/dashboard");
       return;
     }
-    
+
     // Check if user has a profile
     const agency = localStorageService.getAgencyByUserId(user.id);
     if (!agency) {
-      router.push('/profile-setup');
+      router.push("/profile-setup");
     }
   }, [user, router]);
-  
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    
+
     // In a real app, we would upload these files to a server
     // For this MVP, we'll just store the file names
-    const fileNames = Array.from(files).map(file => file.name);
+    const fileNames = Array.from(files).map((file) => file.name);
     setDocuments([...documents, ...fileNames]);
   };
-  
+
   const removeDocument = (index: number) => {
     const newDocuments = [...documents];
     newDocuments.splice(index, 1);
     setDocuments(newDocuments);
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
+    setError("");
+
     if (!description || !requestedDate || !location || !contractorId) {
-      setError('Please fill in all required fields');
+      setError("Please fill in all required fields");
       return;
     }
-    
+
     try {
       setLoading(true);
-      
+
       // Get agency profile
       const agency = localStorageService.getAgencyByUserId(user!.id);
       if (!agency) {
-        throw new Error('Agency profile not found');
+        throw new Error("Agency profile not found");
       }
-      
+
       // Create intervention
-      const intervention = localStorageService.createIntervention({
-        agencyId: agency.id,
-        contractorId,
-        description,
-        requestedDate,
-        location,
-        documents
-      });
-      
-      router.push('/dashboard');
+      // const intervention = localStorageService.createIntervention({
+      //   agencyId: agency.id,
+      //   contractorId,
+      //   description,
+      //   requestedDate,
+      //   location,
+      //   documents,
+      // });
+
+      router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
   };
-  
-  if (!user || user.role !== 'agency') {
+
+  if (!user || user.role !== "agency") {
     return null; // Will redirect in useEffect
   }
-  
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Demande d'intervention</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Demande d&apos;intervention
+        </h1>
         <button
-          onClick={() => router.push('/dashboard')}
+          onClick={() => router.push("/dashboard")}
           className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-1"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+              clipRule="evenodd"
+            />
           </svg>
           Retour au tableau de bord
         </button>
       </div>
-      
+
       <Card>
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
@@ -120,7 +133,7 @@ export default function RequestIntervention() {
               <div className="text-sm text-red-700">{error}</div>
             </div>
           )}
-          
+
           <div>
             <Input
               id="description"
@@ -130,7 +143,7 @@ export default function RequestIntervention() {
               required
             />
           </div>
-          
+
           <div>
             <Input
               id="requested-date"
@@ -141,7 +154,7 @@ export default function RequestIntervention() {
               required
             />
           </div>
-          
+
           <div>
             <Input
               id="location"
@@ -152,7 +165,7 @@ export default function RequestIntervention() {
               required
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Sélectionner un prestataire
@@ -172,7 +185,7 @@ export default function RequestIntervention() {
               ))}
             </select>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Documents (Optionnel)
@@ -211,18 +224,23 @@ export default function RequestIntervention() {
                   <p className="pl-1">ou glisser-déposer</p>
                 </div>
                 <p className="text-xs text-gray-500">
-                  PNG, JPG, PDF jusqu'à 10Mo
+                  PNG, JPG, PDF jusqu&apos;à 10Mo
                 </p>
               </div>
             </div>
           </div>
-          
+
           {documents.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Documents téléchargés</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Documents téléchargés
+              </h3>
               <ul className="divide-y divide-gray-200 border border-gray-200 rounded-md">
                 {documents.map((doc, index) => (
-                  <li key={index} className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                  <li
+                    key={index}
+                    className="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
+                  >
                     <div className="flex items-center">
                       <svg
                         className="h-5 w-5 flex-shrink-0 text-gray-400"
@@ -251,13 +269,9 @@ export default function RequestIntervention() {
               </ul>
             </div>
           )}
-          
+
           <div>
-            <Button
-              type="submit"
-              fullWidth
-              isLoading={loading}
-            >
+            <Button type="submit" fullWidth isLoading={loading}>
               Envoyer la demande
             </Button>
           </div>

@@ -703,10 +703,10 @@ export default function InterventionDetail({
       {intervention.status === "completed" && canPerformAction("agency") && (
         <Card title="Sign Off Intervention">
           <p className="mb-4 text-gray-600">
-            Veuillez signer pour confirmer que l'intervention est terminée de
+            Veuillez signer pour confirmer que lintervention est terminée de
             manière satisfaisante.
           </p>
-          <Button onClick={startSignature}>Signer l'intervention</Button>
+          <Button onClick={startSignature}>Signer l&apos;intervention</Button>
 
           {/* Signature Modal */}
           {isSignatureModalOpen && (
@@ -721,7 +721,7 @@ export default function InterventionDetail({
                     <div className="sm:flex sm:items-start">
                       <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                         <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">
-                          Signer le bon d'intervention
+                          Signer le bon d&apos;intervention
                         </h3>
                         <div className="bg-gray-50 border rounded-md p-2">
                           <canvas
