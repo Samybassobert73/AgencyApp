@@ -7,6 +7,7 @@ import * as localStorageService from "../utils/localStorage";
 import Card from "../components/Card";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import { Contractor } from "../models/types";
 // import { types } from "util";
 
 export default function RequestIntervention() {
@@ -15,7 +16,7 @@ export default function RequestIntervention() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [contractors] = useState(localStorageService.getContractors());
+  const [contractors, setContractor] = useState<Contractor[]>();
 
   // Form fields
   const [description, setDescription] = useState("");
@@ -24,6 +25,9 @@ export default function RequestIntervention() {
   const [documents, setDocuments] = useState<string[]>([]);
   const [contractorId, setContractorId] = useState("");
 
+  useEffect(() => {
+    setContractor(localStorageService.getContractors());
+  }, []);
   useEffect(() => {
     // If user is not logged in, redirect to login page
     if (!user) {
@@ -178,7 +182,7 @@ export default function RequestIntervention() {
               required
             >
               <option value="">Choisir un prestataire</option>
-              {contractors.map((contractor) => (
+              {contractors?.map((contractor) => (
                 <option key={contractor.id} value={contractor.id}>
                   {contractor.companyName}
                 </option>

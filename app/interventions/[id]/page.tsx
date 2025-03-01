@@ -13,12 +13,14 @@ import {
 import Card from "../../components/Card";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-
+import Image from "next/image";
+import { use } from "react";
 export default function InterventionDetail({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
   const router = useRouter();
   const { user } = useAuth();
   const [intervention, setIntervention] = useState<Intervention | null>(null);
@@ -51,7 +53,7 @@ export default function InterventionDetail({
     }
 
     // Load intervention details
-    const interventionData = localStorageService.getInterventionById(params.id);
+    const interventionData = localStorageService.getInterventionById(id);
     if (!interventionData) {
       setError("Intervention not found");
       return;
@@ -87,7 +89,7 @@ export default function InterventionDetail({
       setPvContent(interventionData.pv.content);
       setPvAttachments(interventionData.pv.attachments);
     }
-  }, [user, router, params.id]);
+  }, [user, router, id]);
 
   // Function to check if the current user can perform actions on the intervention
   const canPerformAction = (requiredRole: "agency" | "contractor") => {
@@ -531,7 +533,7 @@ export default function InterventionDetail({
               <h3 className="text-sm font-medium text-gray-500 mb-1">
                 Signature
               </h3>
-              <img
+              <Image
                 src={intervention.signature}
                 alt="Signature"
                 className="max-h-32 border rounded p-2"
